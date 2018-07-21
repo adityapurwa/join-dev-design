@@ -1,6 +1,14 @@
+@charset "UTF-8";
+
+/* Animations */
+
 :root {
   --blue: #05a6f0;
-  --link-color: rgba(244, 99, 97, 1);
+  --yellow: #ffba08;
+  --green: #6cc644;
+  --page-background: #121212;
+  --page-color: #bbb;
+  --root-gradient-animation: 4s both root-gradient linear infinite;
   --move-in-offset: 20px;
   --move-in-animation: 1s both move-in;
   --move-in-base-delay: 100ms;
@@ -9,14 +17,8 @@
 }
 
 @keyframes move-in {
-  from {
-    transform: translateY(var(--move-in-offset));
-    opacity: 0;
-  }
-  to {
-    transform: none;
-    opacity: 1;
-  }
+  from { transform: translateY(var(--move-in-offset)); opacity: 0; }
+  to   { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes logo-tiles-in {
@@ -29,94 +31,109 @@
 }
 
 @keyframes logo-tiles-hover {
-  from { filter: hue-rotate(0deg) }
-  to   { filter: hue-rotate(360deg) }
+  from { filter: hue-rotate(0deg); }
+  to   { filter: hue-rotate(360deg); }
 }
 
+@keyframes root-gradient {
+  0%   { opacity: 0; }
+  40%  { opacity: 1; }
+  60%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Common */
+
 html {
+  position: relative;
   font-size: 125%;
-  font-family: Inconsolata, Consolas, monospace;
+  font-family: Inconsolata, Consolas, "SFMono-Regular", Menlo, "DejaVu Sans Mono", monospace;
   line-height: 1.25;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0.33, #f45326), color-stop(0.67, #80bc07));
-  background-image: -moz-linear-gradient(center bottom, #f45326 33%, #80bc07 67%);
+  background: linear-gradient(to bottom, var(--blue) 33%, var(--yellow) 67%);
+  background-color: var(--page-background);
+}
+
+html:before {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  z-index: -1;
+  background: linear-gradient(to bottom, var(--yellow) 33%, var(--blue) 67%);
+  animation: var(--root-gradient-animation);
 }
 
 body {
   display: flex;
-  flex-flow: column nowrap;
+  flex-direction: column;
+  align-items: center;
   min-height: calc(100vh - 10px);
   margin: 5px;
-  color: #BBB;
-  background-color: rgba(18, 18, 18, 1);
+  color: var(--page-color);
+  background-color: var(--page-background);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::-moz-selection {
   color: white;
-  background-color: var(--blue);
+  background: var(--blue);
 }
 
 ::selection {
   color: white;
-  background-color: var(--blue);
+  background: #05a6f0; /* Edge could not work with custom property here */
 }
 
 a {
-  color: var(--link-color);
+  color: var(--yellow);
   text-decoration: none;
-  transition: 150ms color;
+  transition: 400ms color;
 }
 
-a:hover {
+a:hover,
+a:focus {
   color: var(--blue);
 }
 
+p,
+h1 {
+  margin: 1rem 0;
+}
+
+/* Container */
+
 .container {
-  max-width: 32rem;
-  margin: 0 auto;
-  flex: 1;
+  max-width: 31rem;
+  margin: 0 auto auto;
 }
 
-p {
-  margin: 0;
-  padding: 10px 0.5em;
+@media only screen and (max-width: 40em) {
+  .container {
+    max-width: 80vw;
+  }
+
+  .container p {
+    font-size: 1.125rem;
+  }
 }
 
-header p {
-  animation: var(--move-in-animation);
-  animation-delay: calc(var(--move-in-base-delay) * 4);
-  font-size: 27px;
-  font-weight: bolder;
-}
-
-header hr {
-  border: 0;
-  height: 0;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  width: 97%;
-  animation: var(--move-in-animation);
-  animation-delay: 250ms;
-}
-
-main p {
-  animation: var(--move-in-animation);
-  animation-delay: calc(var(--move-in-base-delay) * 5);
-}
-
-main p:nth-child(2) { animation-delay: calc(var(--move-in-base-delay) * 6) }
-main p:nth-child(3) { animation-delay: calc(var(--move-in-base-delay) * 7) }
-main p:nth-child(4) { animation-delay: calc(var(--move-in-base-delay) * 8) }
+/* Logo */
 
 .logo-link {
   display: block;
   width: 4rem;
   height: 4rem;
-  margin: 2rem auto;
+  margin: 2rem auto 2.5rem;
 }
 
-.logo-link:hover { animation: 1s both logo-tiles-hover linear infinite; }
+.logo-link:hover {
+  animation: 1s both logo-tiles-hover linear infinite;
+}
 
 .logo-image {
   display: block;
@@ -140,47 +157,75 @@ main p:nth-child(4) { animation-delay: calc(var(--move-in-base-delay) * 8) }
   animation: var(--logo-tiles-in-animation);
 }
 
-.logo-tile--red    { background-color: #F35325; }
-.logo-tile--green  { background-color: #81BC06; animation-delay: var(--logo-tiles-in-delay); }
-.logo-tile--blue   { background-color: #05A6F0; animation-delay: calc(var(--logo-tiles-in-delay) * 2); }
-.logo-tile--yellow { background-color: #FFBA08; animation-delay: calc(var(--logo-tiles-in-delay) * 3); }
+.logo-tile--red {
+  background-color: #f33525;
+}
 
-.footer {
-  font-size: 80%;
+.logo-tile--green {
+  background-color: #81bc06;
+  animation-delay: var(--logo-tiles-in-delay);
+}
+
+.logo-tile--blue {
+  background-color: #05a6f0;
+  animation-delay: calc(var(--logo-tiles-in-delay) * 2);
+}
+
+.logo-tile--yellow {
+  background-color: #ffba08;
+  animation-delay: calc(var(--logo-tiles-in-delay) * 3);
+}
+
+/* Main */
+
+main h1 {
+  animation: var(--move-in-animation);
+  animation-delay: calc(var(--move-in-base-delay) * 4);
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+main p { animation: var(--move-in-animation); }
+main p:nth-of-type(1) { animation-delay: calc(var(--move-in-base-delay) * 5); }
+main p:nth-of-type(2) { animation-delay: calc(var(--move-in-base-delay) * 6); }
+main p:nth-of-type(3) { animation-delay: calc(var(--move-in-base-delay) * 7); }
+main p:nth-of-type(4) { animation-delay: calc(var(--move-in-base-delay) * 8); }
+
+/* Footer */
+
+footer {
+  margin: 1rem 0 0;
   text-align: center;
-  padding: 1rem 0;
-}
-
-footer [href*="figma"]:hover {
-  color: #8420FF;
-}
-
-footer [href*="code"]:hover {
-  color: #007ACC;
-}
-
-footer [href*="github"]:hover {
-  color: #6cc644;
+  font-size: 0.8rem;
+  overflow: hidden;
 }
 
 @media only screen and (max-width: 40em) {
-    .container {
-        max-width: calc(100vw - 20vw);
-        margin: 0 auto;
-    }
+  footer {
+    font-size: 1rem;
+    margin: 0 auto;
+    max-width: 80vw;
+  }
+}
 
-    .container p {
-        font-size: 18px;
-    }
+footer p {
+  animation: var(--move-in-animation);
+  animation-delay: calc(var(--move-in-base-delay) * 11);
+}
 
-    footer {
-        text-align: unset;
-        padding: 1em 0 2em;
-        max-width: calc(100vw - 20vw);
-        margin: 0 auto;
-    }
+footer [href*="github"]:hover,
+footer [href*="github"]:focus {
+  color: var(--green);
+}
 
-    footer span {
-        display: block;
-    }
+.footer-piece--separate {
+  display: block;
+}
+
+@media only screen and (max-width: 40em) {
+  .footer-piece {
+    display: block;
+  }
 }
